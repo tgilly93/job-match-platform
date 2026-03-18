@@ -19,7 +19,6 @@ JOIN jobs j ON js.job_id = j.job_id
 WHERE u.user_id = 1
 GROUP BY j.job_id, j.title
 ORDER BY matching_skills DESC;
-SELECT * FROM job_skills;
 -- =====================================
 --     PERCENTAGE-BASED MATCH QUERY
 -- =====================================
@@ -78,8 +77,9 @@ LEFT JOIN user_skills us
 
 GROUP BY j.job_id, j.title
 ORDER BY match_percentage DESC;
-
---MISSING SKILLS QUERY
+-- =====================================
+--      MISSING SKILLS QUERY
+-- =====================================
 SELECT 
     j.title,
     s.name AS missing_skill,

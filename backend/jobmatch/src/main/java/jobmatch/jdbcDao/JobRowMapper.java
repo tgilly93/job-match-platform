@@ -10,7 +10,9 @@ public class JobRowMapper implements RowMapper<Job> {
 
     @Override
     public Job mapRow(ResultSet rs, int rowNum) throws SQLException {
+
         Job job = new Job();
+
         job.setJobId(rs.getInt("job_id"));
         job.setTitle(rs.getString("title"));
         job.setDescription(rs.getString("description"));
@@ -20,6 +22,7 @@ public class JobRowMapper implements RowMapper<Job> {
         job.setMinExperience(rs.getInt("min_experience"));
         job.setSource(rs.getString("source"));
         job.setUrl(rs.getString("url"));
+
         return job;
     }
 }

@@ -1,6 +1,7 @@
 package jobmatch.service;
 
 import jobmatch.dao.JobDao;
+import jobmatch.dto.JobMatch;
 import jobmatch.model.Job;
 import org.springframework.stereotype.Service;
 
@@ -28,5 +29,10 @@ public class JobServiceImpl implements JobService {
     @Override
     public int addJob(Job job) {
         return jobDao.addJob(job);
+    }
+
+    @Override
+    public List<JobMatch> getWeightedMatches(int userId) {
+        return jobDao.getWeightedMatches(userId);
     }
 }

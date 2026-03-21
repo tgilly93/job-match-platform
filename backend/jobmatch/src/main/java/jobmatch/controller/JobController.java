@@ -1,6 +1,8 @@
 package jobmatch.controller;
 
+import jobmatch.dto.JobMatch;
 import jobmatch.model.Job;
+import jobmatch.service.JobIngestionService;
 import jobmatch.service.JobService;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,9 +13,11 @@ import java.util.List;
 public class JobController {
 
     private final JobService jobService;
+    private final JobIngestionService jobIngestionService;
 
-    public JobController(JobService jobService)  {
+    public JobController(JobService jobService, JobIngestionService jobIngestionService)  {
         this.jobService = jobService;
+        this.jobIngestionService = jobIngestionService;
     }
 
     @GetMapping
@@ -29,5 +33,16 @@ public class JobController {
     @PostMapping
     public int addJob(@RequestBody Job job) {
         return jobService.addJob(job);
+    }
+
+    @GetMapping("/ingest")
+    public String ingestJobs() {
+        int count = jobIngestionService.fetchAndSaveJobs();
+        return count + " jobs ingested!";
+    }
+
+    @GetMapping("/match/{userId}")
+    public List<JobMatch> getMatches(@PathVariable("userId") int userId) {
+        return jobService.getWeightedMatches(userId);
     }
 }

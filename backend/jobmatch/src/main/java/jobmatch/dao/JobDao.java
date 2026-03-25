@@ -1,6 +1,6 @@
 package jobmatch.dao;
 
-import jobmatch.dto.JobMatch;
+import jobmatch.dto.JobMatchDto;
 import jobmatch.model.Job;
 
 import java.util.List;
@@ -11,7 +11,7 @@ public interface JobDao {
 
     Job getJobById(int jobId);
 
-    int addJob(Job job);
+    Integer addJob(Job job);
 
-    List<JobMatch> getWeightedMatches(int userId);
+    List<JobMatchDto> getWeightedMatches(int userId);
 }

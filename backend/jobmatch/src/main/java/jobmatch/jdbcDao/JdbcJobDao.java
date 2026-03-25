@@ -1,7 +1,7 @@
 package jobmatch.jdbcDao;
 
 import jobmatch.dao.JobDao;
-import jobmatch.dto.JobMatch;
+import jobmatch.dto.JobMatchDto;
 import jobmatch.model.Job;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -30,7 +30,7 @@ public class JdbcJobDao implements JobDao {
     }
 
     @Override
-    public int addJob(Job job) {
+    public Integer addJob(Job job) {
         String sql = "INSERT INTO jobs (title, company_name, location, description, min_experience, max_experience, source, url) "  +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING job_id";
 
@@ -53,7 +53,7 @@ public class JdbcJobDao implements JobDao {
     }
 
     @Override
-    public List<JobMatch> getWeightedMatches(int userId) {
+    public List<JobMatchDto> getWeightedMatches(int userId) {
         String sql = """
                 SELECT
                     j.job_id,

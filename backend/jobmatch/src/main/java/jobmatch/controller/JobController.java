@@ -1,6 +1,6 @@
 package jobmatch.controller;
 
-import jobmatch.dto.JobMatch;
+import jobmatch.dto.JobMatchDto;
 import jobmatch.model.Job;
 import jobmatch.service.JobIngestionService;
 import jobmatch.service.JobService;
@@ -31,7 +31,7 @@ public class JobController {
     }
 
     @PostMapping
-    public int addJob(@RequestBody Job job) {
+    public Integer addJob(@RequestBody Job job) {
         return jobService.addJob(job);
     }
 
@@ -42,7 +42,7 @@ public class JobController {
     }
 
     @GetMapping("/match/{userId}")
-    public List<JobMatch> getMatches(@PathVariable("userId") int userId) {
+    public List<JobMatchDto> getMatches(@PathVariable("userId") int userId) {
         return jobService.getWeightedMatches(userId);
     }
 }

@@ -1,17 +1,17 @@
 package jobmatch.jdbcDao;
 
-import jobmatch.dto.JobMatch;
+import jobmatch.dto.JobMatchDto;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class JobMatchRowMapper implements RowMapper<JobMatch> {
+public class JobMatchRowMapper implements RowMapper<JobMatchDto> {
 
     @Override
-    public JobMatch mapRow(ResultSet rs, int rowNum) throws SQLException {
+    public JobMatchDto mapRow(ResultSet rs, int rowNum) throws SQLException {
 
-        JobMatch match = new JobMatch();
+        JobMatchDto match = new JobMatchDto();
 
         match.setJobId(rs.getInt("job_id"));
         match.setTitle(rs.getString("title"));

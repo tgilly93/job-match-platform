@@ -1,12 +1,22 @@
 package jobmatch.dto;
 
-public class JobMatch {
+public class JobMatchDto {
 
     private int jobId;
     private String title;
     private int totalWeight;
     private int matchedWeight;
     private double matchPercentage;
+
+    public JobMatchDto() {}
+
+    public JobMatchDto(int jobId, String title, int totalWeight, int matchedWeight, double matchPercentage) {
+        this.jobId = jobId;
+        this.title = title;
+        this.totalWeight = totalWeight;
+        this.matchedWeight = matchedWeight;
+        this.matchPercentage = matchPercentage;
+    }
 
     public int getJobId() {
         return jobId;
@@ -48,4 +58,14 @@ public class JobMatch {
         this.matchPercentage = matchPercentage;
     }
 
+    @Override
+    public String toString() {
+        return "JobMatchDto{" +
+                "jobId=" + jobId +
+                ", title='" + title + '\'' +
+                ", totalWeight=" + totalWeight +
+                ", matchedWeight=" + matchedWeight +
+                ", matchPercentage=" + matchPercentage +
+                '}';
+    }
 }

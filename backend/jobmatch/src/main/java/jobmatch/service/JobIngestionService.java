@@ -1,6 +1,7 @@
 package jobmatch.service;
 
 import jobmatch.model.Job;
+import jobmatch.model.Skills;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,10 +20,12 @@ public class JobIngestionService {
     private String app_key;
 
     private final JobService jobService;
+    private final SkillsService skillsService;
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public JobIngestionService(JobService jobService)  {
+    public JobIngestionService(JobService jobService, SkillsService skillsService)  {
         this.jobService = jobService;
+        this.skillsService = skillsService;
     }
 
     @SuppressWarnings("unchecked")
@@ -57,7 +60,26 @@ public class JobIngestionService {
             job.setMinExperience(0);
             job.setMaxExperience(10);
 
-            jobService.addJob(job);
+            int jobId = jobService.addJob(job);
+
+            String description = job.getDescription();
+
+            if(description != null) {
+
+                List<String> keywords = List.of("java", "sql", "react", "spring", "spring boot", "teradata", "jira");
+
+                for(String keyword : keywords) {
+
+                    if(description.toLowerCase().contains(keyword)) {
+
+                        Skills skills = skillsService.getOrCreateSkill(keyword);
+                        int importance = description.toLowerCase().indexOf(keyword) < 200 ? 5 : 3;
+
+                        jobService.addJobSkill(jobId, skills.getSkillId(), importance);
+                    }
+
+                }
+            }
 
             count++;
         }

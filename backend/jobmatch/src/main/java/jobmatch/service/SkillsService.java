@@ -11,4 +11,6 @@ public interface SkillsService {
     Skills getSkillById(int skillId);
 
     Integer addSkill(Skills skill);
+
+    Skills getOrCreateSkill(String name);
 }

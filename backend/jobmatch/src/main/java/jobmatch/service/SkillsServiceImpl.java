@@ -29,4 +29,22 @@ public class SkillsServiceImpl implements SkillsService {
     public Integer addSkill(Skills skill) {
         return skillsDao.addSkill(skill);
     }
+
+    @Override
+    public Skills getOrCreateSkill(String name)  {
+
+        Skills skill = skillsDao.getSkillByName(name);
+
+        if (skill != null) {
+            return skill;
+        }
+
+        Skills newSkill = new Skills();
+        newSkill.setName(name);
+
+        int id = skillsDao.addSkill(newSkill);
+        newSkill.setSkillId(id);
+
+        return newSkill;
+    }
 }

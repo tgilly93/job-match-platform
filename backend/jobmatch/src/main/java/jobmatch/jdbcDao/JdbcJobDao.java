@@ -83,6 +83,12 @@ public class JdbcJobDao implements JobDao {
                 ORDER BY match_percentage DESC
                 """;
 
-        return  jdbcTemplate.query(sql, new JobMatchRowMapper(), userId);
+        return jdbcTemplate.query(sql, new JobMatchRowMapper(), userId);
+    }
+
+    @Override
+    public void addJobSkill(int jobId, int skillId, int importanceLevel) {
+        String sql = "INSERT INTO job_skills (job_id, skill_id, importance_level) VALUES (?, ?, ?)";
+        jdbcTemplate.update(sql, jobId, skillId, importanceLevel);
     }
 }

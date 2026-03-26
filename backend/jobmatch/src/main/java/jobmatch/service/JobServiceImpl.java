@@ -35,4 +35,9 @@ public class JobServiceImpl implements JobService {
     public List<JobMatchDto> getWeightedMatches(int userId) {
         return jobDao.getWeightedMatches(userId);
     }
+
+    @Override
+    public void addJobSkill(int jobId, int skillId, int importanceLevel) {
+        jobDao.addJobSkill(jobId, skillId, importanceLevel);
+    }
 }

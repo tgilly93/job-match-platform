@@ -11,4 +11,6 @@ public interface SkillsDao {
     Skills getSkillById(int skillId);
 
     Integer addSkill(Skills skill);
+
+    Skills getSkillByName(String name);
 }

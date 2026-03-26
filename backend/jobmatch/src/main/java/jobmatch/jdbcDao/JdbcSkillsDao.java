@@ -34,4 +34,11 @@ public class JdbcSkillsDao implements SkillsDao {
         Integer id = jdbcTemplate.queryForObject(sql, Integer.class, skill.getName());
         return id != null ? id: -1;
     }
+
+    @Override
+    public Skills getSkillByName(String name) {
+        String sql = "SELECT * FROM skills WHERE name = ILIKE ?";
+        List<Skills> skills = jdbcTemplate.query(sql, new SkillRowMapper(), name);
+        return skills.isEmpty() ? null : skills.get(0);
+    }
 }

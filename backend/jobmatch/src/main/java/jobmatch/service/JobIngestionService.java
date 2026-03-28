@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class JobIngestionService {
@@ -30,7 +27,7 @@ public class JobIngestionService {
 
     @SuppressWarnings("unchecked")
     public int fetchAndSaveJobs() {
-        String url = "https://api.adzuna.com/v1/api/jobs/us/search/1" + "?app_id=" + app_id + "&app_key=" + app_key;
+        String url = "https://api.adzuna.com/v1/api/jobs/us/search/1" + "?app_id=" + app_id + "&app_key=" + app_key + "&category=it-jobs" + "&where=ohio" + "&sort_by=date";
 
         Map<String,Object> response = restTemplate.getForObject(url, Map.class);
 
@@ -60,31 +57,85 @@ public class JobIngestionService {
             job.setMinExperience(0);
             job.setMaxExperience(10);
 
+            System.out.println("Processing job: " + job.getTitle());  //DEBUG
+            System.out.println("Description: " + job.getDescription()); //DEBUG
+
             int jobId = jobService.addJob(job);
 
             String description = job.getDescription();
 
             if(description != null) {
 
-                List<String> keywords = List.of("java", "sql", "react", "spring", "spring boot", "teradata", "jira");
+                String lowerDescription = description.toLowerCase();
 
-                for(String keyword : keywords) {
+                Map<String, List<String>> skillMap = Map.ofEntries(
+                        Map.entry("java", List.of("java")),
+                        Map.entry("spring", List.of("spring", "spring boot")),
+                        Map.entry("javascript", List.of("javascript", "js")),
+                        Map.entry("sql", List.of("sql", "postgres", "mysql")),
+                        Map.entry("cloud", List.of("aws", "teradata", "gcp")),
+                        Map.entry("api", List.of("api", "rest", "restful")),
+                        Map.entry("react", List.of("react")),
+                        Map.entry("jira", List.of("jira")),
+                        Map.entry("git", List.of("git", "github")),
+                        Map.entry("agile", List.of("agile", "waterfall")),
+                        Map.entry("ci/cd", List.of("ci/cd", "pipeline", "end-to-end")),
+                        Map.entry("tools", List.of("vscode", "intellij", "postman")),
+                        Map.entry("data", List.of("data", "database", "analysis", "analytical", "analytics")),
+                        Map.entry("microsoft", List.of("microsoft suite", "microsoft word", "excel", "microsoft office")),
+                        Map.entry("oop", List.of("oop")),
+                        Map.entry("teradata", List.of("teradata"))
+                );
 
-                    if(description.toLowerCase().contains(keyword)) {
+                List<String> matchedKeywords = new ArrayList<>();
 
-                        Skills skills = skillsService.getOrCreateSkill(keyword);
-                        int importance = description.toLowerCase().indexOf(keyword) < 200 ? 5 : 3;
+                for(Map.Entry<String, List<String>> entry : skillMap.entrySet()) {
 
-                        jobService.addJobSkill(jobId, skills.getSkillId(), importance);
+                    String normalizedSkill = entry.getKey();
+                    List<String> variations  = entry.getValue();
+
+                    for(String keyword : variations) {
+
+                        if(lowerDescription.contains(keyword)) {
+                            matchedKeywords.add(keyword);
+                            System.out.println("MATCH FOUND: " + keyword + " -> " + normalizedSkill);
+
+                            int frequency = countOccurrences(lowerDescription, keyword);
+                            int baseImportance = 3;
+                            int positionBoost = lowerDescription.indexOf(keyword) < 200 ? 1 : 0;
+
+                            int importance = Math.min(5, baseImportance + frequency / 2 + positionBoost);
+
+                            Skills skills = skillsService.getOrCreateSkill(normalizedSkill);
+
+                            System.out.println("Frequency:" + frequency + " | Importance: "  + importance);
+                            System.out.println("SkillID: " + skills.getSkillId());
+
+                            jobService.addJobSkill(jobId, skills.getSkillId(), importance);
+
+                            break;
+                        }
                     }
-
                 }
+                System.out.println("Matched keywords for job " + job.getTitle() +  ": " + matchedKeywords);
             }
-
             count++;
         }
 
         return count;
+    }
+
+    private int countOccurrences(String text, String keyword) {
+        int count = 0;
+        int index = 0;
+
+        while((index = text.indexOf(keyword, index)) != -1) {
+            count++;
+            index += keyword.length();
+        }
+
+        return count;
+
     }
 
 }

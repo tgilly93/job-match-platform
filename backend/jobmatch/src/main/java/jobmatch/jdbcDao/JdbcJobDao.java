@@ -91,4 +91,23 @@ public class JdbcJobDao implements JobDao {
         String sql = "INSERT INTO job_skills (job_id, skill_id, importance_level) VALUES (?, ?, ?)";
         jdbcTemplate.update(sql, jobId, skillId, importanceLevel);
     }
+
+    @Override
+    public List<String> getMissingSkills(int userId, int jobId) {
+        String sql = """
+                SELECT
+                    s.name AS missing_skill
+                FROM jobs j
+                JOIN job_skills js  ON j.job_id = js.job_id
+                JOIN skills s ON js.skill_id = s.skill_id
+                LEFT JOIN user_skills us
+                    ON  js.skill_id = us.skill_id 
+                    AND us.user_id = ?
+                WHERE j.job_id = ?
+                AND us.skill_id IS NULL
+                ORDER BY js.importance_level DESC
+        """;
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString("missing_skill"), userId, jobId);
+    }
 }

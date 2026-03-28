@@ -37,7 +37,7 @@ public class JdbcSkillsDao implements SkillsDao {
 
     @Override
     public Skills getSkillByName(String name) {
-        String sql = "SELECT * FROM skills WHERE name = ILIKE ?";
+        String sql = "SELECT * FROM skills WHERE name = ?";
         List<Skills> skills = jdbcTemplate.query(sql, new SkillRowMapper(), name);
         return skills.isEmpty() ? null : skills.get(0);
     }

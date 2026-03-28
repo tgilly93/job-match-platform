@@ -16,4 +16,6 @@ public interface JobDao {
     List<JobMatchDto> getWeightedMatches(int userId);
 
     void addJobSkill(int jobId, int skillId, int importanceLevel);
+
+    List<String> getMissingSkills(int userId, int jobId);
 }

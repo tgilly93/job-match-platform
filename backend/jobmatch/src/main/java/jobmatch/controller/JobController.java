@@ -45,4 +45,9 @@ public class JobController {
     public List<JobMatchDto> getMatches(@PathVariable("userId") int userId) {
         return jobService.getWeightedMatches(userId);
     }
+
+    @GetMapping("/{jobId}/missing-skills")
+    public List<String> getMissingSkills(@PathVariable("jobId") int jobId, @RequestParam("userId") int userId) {
+        return jobService.getMissingSkills(userId, jobId);
+    }
 }

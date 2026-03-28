@@ -40,4 +40,9 @@ public class JobServiceImpl implements JobService {
     public void addJobSkill(int jobId, int skillId, int importanceLevel) {
         jobDao.addJobSkill(jobId, skillId, importanceLevel);
     }
+
+    @Override
+    public List<String> getMissingSkills(int userId, int jobId) {
+        return jobDao.getMissingSkills(userId, jobId);
+    }
 }

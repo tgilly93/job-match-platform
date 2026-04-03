@@ -70,24 +70,27 @@ public class JobIngestionService {
 
                 Map<String, List<String>> skillMap = Map.ofEntries(
                         Map.entry("java", List.of("java")),
-                        Map.entry("spring", List.of("spring", "spring boot")),
-                        Map.entry("javascript", List.of("javascript", "js")),
-                        Map.entry("sql", List.of("sql", "postgres", "mysql")),
-                        Map.entry("cloud", List.of("aws", "teradata", "gcp")),
-                        Map.entry("api", List.of("api", "rest", "restful")),
-                        Map.entry("react", List.of("react")),
+                        Map.entry("spring", List.of("spring", "spring boot", "spring framework")),
+                        Map.entry("javascript", List.of("javascript", "js", "typescript", "node", "node.js")),
+                        Map.entry("sql", List.of("sql", "postgres", "mysql", "postgresql")),
+                        Map.entry("cloud", List.of("aws", "teradata", "gcp", "google cloud", "amazon web services")),
+                        Map.entry("api", List.of("api", "rest", "restful", "microservices")),
+                        Map.entry("react", List.of("react", "react.js", "redux")),
                         Map.entry("jira", List.of("jira")),
                         Map.entry("git", List.of("git", "github")),
-                        Map.entry("agile", List.of("agile", "waterfall")),
-                        Map.entry("ci/cd", List.of("ci/cd", "pipeline", "end-to-end")),
+                        Map.entry("agile", List.of("agile", "waterfall", "scrum", "kanban")),
+                        Map.entry("ci/cd", List.of("ci/cd", "pipeline", "end-to-end", "github actions")),
                         Map.entry("tools", List.of("vscode", "intellij", "postman")),
-                        Map.entry("data", List.of("data", "database", "analysis", "analytical", "analytics")),
+                        Map.entry("data", List.of("data", "etl", "analysis", "analytics")),
                         Map.entry("microsoft", List.of("microsoft suite", "microsoft word", "excel", "microsoft office")),
-                        Map.entry("oop", List.of("oop")),
-                        Map.entry("teradata", List.of("teradata"))
+                        Map.entry("oop", List.of("oop", "object oriented")),
+                        Map.entry("teradata", List.of("teradata")),
+                        Map.entry("testing", List.of("junit", "testing", "unit test", "integration test")),
+                        Map.entry("database", List.of("database", "db", "data storage"))
                 );
 
                 List<String> matchedKeywords = new ArrayList<>();
+                Set<String> matchedSkills = new HashSet<>();
 
                 for(Map.Entry<String, List<String>> entry : skillMap.entrySet()) {
 
@@ -96,15 +99,22 @@ public class JobIngestionService {
 
                     for(String keyword : variations) {
 
-                        if(lowerDescription.contains(keyword)) {
+                        if(lowerDescription.matches(".*\\b" + keyword + ".*\\b")) {
+
+                            if(matchedSkills.contains(normalizedSkill)) {
+                                break;
+                            }
+                            matchedSkills.add(normalizedSkill);
+
                             matchedKeywords.add(keyword);
                             System.out.println("MATCH FOUND: " + keyword + " -> " + normalizedSkill);
 
                             int frequency = countOccurrences(lowerDescription, keyword);
-                            int baseImportance = 3;
-                            int positionBoost = lowerDescription.indexOf(keyword) < 200 ? 1 : 0;
+                            int baseImportance = 2;
+                            int frequencyBoost = Math.min(2, frequency);
+                            int positionBoost = lowerDescription.indexOf(keyword) < 150 ? 1 : 0;
 
-                            int importance = Math.min(5, baseImportance + frequency / 2 + positionBoost);
+                            int importance = Math.min(5, baseImportance + frequencyBoost + positionBoost);
 
                             Skills skills = skillsService.getOrCreateSkill(normalizedSkill);
 

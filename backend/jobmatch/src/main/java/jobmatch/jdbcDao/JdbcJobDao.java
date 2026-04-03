@@ -61,14 +61,14 @@ public class JdbcJobDao implements JobDao {
                     SUM(js.importance_level) AS total_weight,
                     SUM(
                         CASE
-                            WHEN us.skill_id IS NOT NULL THEN js.importance_level
+                            WHEN us.proficiency_level IS NOT NULL THEN LEAST(us.proficiency_level, js.importance_level)
                             ELSE 0
                         END
                     ) AS matched_weight,
                     ROUND(
                         SUM(
                             CASE
-                                WHEN us.skill_id IS NOT NULL THEN js.importance_level
+                                WHEN us.proficiency_level IS NOT NULL THEN LEAST(us.proficiency_level, js.importance_level)
                                 ELSE 0
                             END
                         ) * 100.0 / SUM(js.importance_level),
@@ -101,7 +101,7 @@ public class JdbcJobDao implements JobDao {
                 JOIN job_skills js  ON j.job_id = js.job_id
                 JOIN skills s ON js.skill_id = s.skill_id
                 LEFT JOIN user_skills us
-                    ON  js.skill_id = us.skill_id 
+                    ON  js.skill_id = us.skill_id
                     AND us.user_id = ?
                 WHERE j.job_id = ?
                 AND us.skill_id IS NULL

@@ -2,6 +2,7 @@ package jobmatch.jdbcDao;
 
 import jobmatch.dao.UserDao;
 import jobmatch.model.User;
+import jobmatch.model.UserSkill;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -73,5 +74,29 @@ public class JdbcUserDao implements UserDao {
         if (rowsAffected == 0) {
             throw new RuntimeException("No user deleted with ID " + userId);
         }
+    }
+
+    @Override
+    public int addUserSkill(UserSkill userSkill) {
+        String sql = "INSERT INTO user_skills (user_id, skill_id, proficiency_level) "  +
+                "VALUES (?, ?, ?) " + "ON CONFLICT (user_id, skill_id) DO UPDATE SET proficiency_level = EXCLUDED.proficiency_level";
+
+        int rowsAffected = jdbcTemplate.update(sql,
+                userSkill.getUserId(),
+                userSkill.getSkillId(),
+                userSkill.getProficiencyLevel()
+        );
+
+        if (rowsAffected == 0) {
+            throw new RuntimeException("Failed to add or update user skill.");
+        }
+        return rowsAffected;
+    }
+
+    @Override
+    public List<UserSkill> getUserSkills(int userId) {
+        String sql = "SELECT * FROM user_skills WHERE user_id = ?";
+
+        return jdbcTemplate.query(sql, new UserSkillRowMapper(), userId);
     }
 }

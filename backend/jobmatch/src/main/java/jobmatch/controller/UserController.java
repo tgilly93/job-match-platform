@@ -1,6 +1,8 @@
 package jobmatch.controller;
 
+import jobmatch.dto.UserSkillDto;
 import jobmatch.model.User;
+import jobmatch.model.UserSkill;
 import jobmatch.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -47,5 +49,15 @@ public class UserController {
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable int id) {
         userService.deleteUser(id);
+    }
+
+    @PostMapping("/{userId}/skills")
+    public void addUserSkill(@PathVariable int userId, @RequestBody UserSkillDto dto) {
+        userService.addUserSkill(userId, dto);
+    }
+
+    @GetMapping("/{userId}/skills")
+    public List<UserSkill> getUserSkills(@PathVariable int userId) {
+        return userService.getUserSkills(userId);
     }
 }

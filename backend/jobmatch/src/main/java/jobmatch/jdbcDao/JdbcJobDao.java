@@ -61,17 +61,17 @@ public class JdbcJobDao implements JobDao {
                     SUM(js.importance_level) AS total_weight,
                     SUM(
                         CASE
-                            WHEN us.proficiency_level IS NOT NULL THEN LEAST(us.proficiency_level, js.importance_level)
+                            WHEN us.proficiency_level IS NOT NULL THEN js.importance_level * us.proficiency_level
                             ELSE 0
                         END
                     ) AS matched_weight,
                     ROUND(
                         SUM(
                             CASE
-                                WHEN us.proficiency_level IS NOT NULL THEN LEAST(us.proficiency_level, js.importance_level)
+                                WHEN us.proficiency_level IS NOT NULL THEN js.importance_level * us.proficiency_level
                                 ELSE 0
                             END
-                        ) * 100.0 / SUM(js.importance_level),
+                        ) * 100.0 / (SUM(js.importance_level) * 5),
                         2
                     ) AS match_percentage
                 FROM jobs j

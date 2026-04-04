@@ -49,5 +49,6 @@ CREATE TABLE job_skills (
     job_id INT REFERENCES jobs(job_id) ON DELETE CASCADE,
     skill_id INT REFERENCES skills(skill_id) ON DELETE CASCADE,
     importance_level INT CHECK (importance_level BETWEEN 1 AND 5),
+    is_required BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (job_id, skill_id)
 );

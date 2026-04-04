@@ -79,6 +79,8 @@ public class JdbcJobDao implements JobDao {
                                 -
                                 SUM(
                                     CASE
+                                        WHEN us.proficiency_level IS NULL AND js.is_required = true
+                                        THEN js.importance_level * 5
                                         WHEN us.proficiency_level IS NULL
                                         THEN js.importance_level * 2
                                         ELSE 0
